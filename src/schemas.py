@@ -4,15 +4,11 @@ from uuid import UUID
 
 class PromptIn(BaseModel):
     prompt_name: str
-    version: str 
     prompt_content: str
 
 class PromptOut(BaseModel):
     prompt_id: UUID
-    prompt_name: str
-    version: str 
-    prompt_content: str
-    timestamp: datetime
+    current_version_id: UUID
 
     model_config = ConfigDict(from_attributes=True)
 
