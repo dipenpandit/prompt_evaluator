@@ -1,5 +1,16 @@
 from fastapi import APIRouter, Depends, status
-from src.schemas import TestCaseOut
-router = APIRouter(prefix="/ques_ans", tags=["Questino Answers"])
+from src.schemas import TestCaseIn, TestCaseOut
+from sqlalchemy.orm import Session
+from src.db.database import get_db
+from src.db.models import TestCase
 
-# @router.post("/", response_format=TestCaseOut)
+router = APIRouter(prefix="/ques_ans", tags=["Question Answers"])
+
+@router.post("/", response_model=TestCaseOut, status_code=status.HTTP_201_CREATED)
+async def create_ques(qa: TestCaseIn,
+                    db: Session = Depends(get_db)) -> TestCaseOut:
+    new_qa = TestCase(**qa.model_dump())
+    db.add(new_qa)
+    db.commit()
+    db.refresh(new_qa)  
+    return new_qa

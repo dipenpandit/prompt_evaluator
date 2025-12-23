@@ -19,12 +19,13 @@ class PromptOut(BaseModel):
 class TestCaseIn(BaseModel):
     question: str
     answer: str
+    prompt_id: UUID 
 
 class TestCaseOut(BaseModel):
     test_id: UUID
     question: str
     answer: str
-    prompt_id: str 
+    prompt_id: UUID 
 
     model_config = ConfigDict(from_attributes=True)
  

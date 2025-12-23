@@ -21,7 +21,9 @@ class Prompt(Base):
 class TestCase(Base):
     __tablename__ = "test_cases"
     
-    test_id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    test_id: Mapped[UUID] = mapped_column(UUID(as_uuid=True), 
+                                            primary_key=True, index=True,
+                                            default=uuid4)
     question: Mapped[str] = mapped_column(String, nullable=True)
     answer: Mapped[str] = mapped_column(String, nullable=True)
     prompt_id: Mapped[UUID] = mapped_column(ForeignKey("prompts.prompt_id"), nullable=False)

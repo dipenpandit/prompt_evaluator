@@ -9,7 +9,7 @@ router = APIRouter(prefix="/prompts", tags=["Create Prompt"])
 
 # Create a new Prompt Project
 @router.post("/", response_model=PromptOut, status_code=status.HTTP_201_CREATED)
-async def check_prompt(prompt: PromptIn,
+async def create_prompt(prompt: PromptIn,
                        db: Session = Depends(get_db)) -> PromptOut:
     new_prompt = Prompt(**prompt.model_dump())
     db.add(new_prompt)
