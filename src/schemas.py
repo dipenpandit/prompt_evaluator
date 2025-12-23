@@ -12,6 +12,13 @@ class PromptOut(BaseModel):
 
     model_config = ConfigDict(from_attributes=True)
 
+class DisplayPrompt(BaseModel):
+    prompt_id: UUID
+    version_number: int
+    prompt_name: str
+    prompt_content: str
+    status: str
+
 class TestCaseIn(BaseModel):
     question: str
     answer: str

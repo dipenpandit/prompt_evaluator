@@ -28,8 +28,7 @@ class Prompt(Base):
     
     prompt_id: Mapped[UUID] = mapped_column(UUID(as_uuid=True), 
                                             primary_key=True, index=True,)
-    current_version_id: Mapped[UUID] = mapped_column(UUID(as_uuid=True), 
-                                            nullable=False)
+    current_version_id: Mapped[UUID] = mapped_column(ForeignKey("prompt_versions.version_id"), nullable=False)
 
 class TestCase(Base):
     __tablename__ = "test_cases"
