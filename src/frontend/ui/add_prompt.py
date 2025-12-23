@@ -1,6 +1,6 @@
 import streamlit as st  
 import requests
-from config import settings
+from src.config import settings
 
 ## Add New Prompt Project
 def add_new_prompt():
@@ -8,7 +8,7 @@ def add_new_prompt():
     if "show_form" not in st.session_state:
         st.session_state.show_form = False
     
-    if st.button("Add New Prompt Project"):
+    if st.button("Create Project"):
         st.session_state.show_form = not st.session_state.show_form
     
     # Show form if toggle is True
@@ -33,9 +33,9 @@ def add_new_prompt():
                         if response.status_code == 201:
                             st.success("Prompt Project created successfully!")
                             st.session_state.show_form = False  # Hide form after success
-                            st.rerun()  # Refresh to show updated state
                         else:
                             st.error(f"Failed to create Prompt Project. Status code: {response.status_code}")
                             st.write(response.text)
                     except requests.exceptions.RequestException as e:
                         st.error(f"An error occurred: {e}")
+                        
