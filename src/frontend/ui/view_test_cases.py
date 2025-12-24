@@ -3,9 +3,9 @@ import requests
 from src.config import settings
 
 # @st.dialog("View Test Cases")
-def test_case_dialog():
+def test_case_dialog(prompt_id):
     try: 
-        response = requests.get(f"{settings.api_url}/ques_ans/")
+        response = requests.get(f"{settings.api_url}/test_cases/{prompt_id}")
         if response.status_code != 200:
             st.error("Failed to fetch test cases")
             return

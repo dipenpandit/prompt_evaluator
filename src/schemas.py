@@ -6,8 +6,13 @@ class PromptIn(BaseModel):
     prompt_name: str
     prompt_content: str
 
-class UpdatePromptIn(BaseModel):
-    prompt_content: str    
+class EditPromptIn(BaseModel):
+    prompt_content: str   
+    status: str = "inactive"
+
+class FixPromptIn(BaseModel):
+    prompt_content: str 
+    status: str = "active"
 
 class PromptOut(BaseModel):
     prompt_id: UUID

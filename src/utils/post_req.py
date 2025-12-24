@@ -19,7 +19,7 @@ def post_ques_ans(ques, answer, prompt_id):
         "prompt_id": prompt_id,
     }
     try:
-        response = requests.post(f"{settings.api_url}/ques_ans/", json=payload)
+        response = requests.post(f"{settings.api_url}/test_cases/", json=payload)
         return response
     except requests.exceptions.RequestException as e:
         return None

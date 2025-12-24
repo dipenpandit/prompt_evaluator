@@ -22,6 +22,7 @@ class PromptVersion(Base):
     prompt_id: Mapped[UUID] = mapped_column(ForeignKey("prompts.prompt_id"), nullable=False)
     version_number: Mapped[int] = mapped_column(default=1)
     prompt_content: Mapped[str] = mapped_column(String, nullable=False)
+    status: Mapped[str] = mapped_column(String, default="inactive")
     created: Mapped[datetime.datetime] = mapped_column(DateTime, default=lambda: datetime.datetime.now(datetime.timezone.utc))
 
 class TestCase(Base):

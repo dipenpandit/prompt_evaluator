@@ -1,42 +1,53 @@
 import streamlit as st
 from src.config import settings 
 import requests
-from src.frontend.ui.test_cases import test_case_dialog
+from src.frontend.ui.view_test_cases import test_case_dialog
+from src.frontend.ui.edit_prompt import edit_prompt
+# from src.frontend.ui.run_eval import run_evaluation
 
 def my_prompts():
-    # Session state to track selected prompt
-    if "selected_prompt" not in st.session_state:         
+    if "selected_prompt" not in st.session_state:
         st.session_state.selected_prompt = None
+    
+    if "run_evaluation" not in st.session_state:
+        st.session_state.run_evaluation = None
 
-    response = requests.get(f"{settings.api_url}/prompts/")      
-
+    response = requests.get(f"{settings.api_url}/prompts/")
     if response.status_code != 200:
         st.error("Failed to fetch prompts")
-        return 
-    
+        return
+
     prompts = response.json()
 
-    # Render prompts as clickable buttons
     for prompt in prompts:
-        with st.expander(f"{prompt['prompt_name']} (v: {prompt['version_number']})", expanded=False):
+        with st.expander(f"{prompt['prompt_name']} (v: {prompt['version_number']})"):
             st.write(prompt['prompt_content'])
-            if st.button("Edit Prompt", key=prompt['prompt_id']):
-                st.session_state.selected_prompt = prompt   
-                selected = st.session_state.selected_prompt
-                with st.form(key="Edit Prompt", clear_on_submit=True):
-                    new_content = st.text_area("Prompt Content", value=selected['prompt_content'])
-                    submit = st.form_submit_button("Update Prompt")
-                    if submit:
-                        if new_content.strip() == "":
-                            st.error("Prompt content cannot be empty.")
-                        else:
-                            # update prompt via API
-                            pass
-            
-            if st.button("Test Cases", key=f"add_{prompt['prompt_id']}"):
-                st.session_state.selected_prompt = prompt   
-                selected = st.session_state.selected_prompt
-                test_case_dialog()
-                
+
+            if st.button(
+                "Edit Prompt",
+                key=f"edit_{prompt['prompt_id']}"
+            ):
+                st.session_state.selected_prompt = prompt
+
+            if st.button(
+                "Run Evaluation",
+                key=f"eval_{prompt['prompt_id']}"
+            ):
+                st.session_state.run_evaluation = prompt
+
+            if st.button(
+                "Test Cases",
+                key=f"test_{prompt['prompt_id']}"
+            ):
+                test_case_dialog(prompt['prompt_id'])
+
+    # edit prompt func
+    if st.session_state.selected_prompt:
+        edit_prompt()
+
+    # run test cases func
+    # if st.session_state.run_evaluation:
+    #     run_evaluation()
 
 
+    
