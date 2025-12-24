@@ -1,6 +1,7 @@
 from pydantic import BaseModel, ConfigDict
 from datetime import datetime
 from uuid import UUID
+from typing import Literal
 
 class PromptIn(BaseModel):
     prompt_name: str
@@ -13,6 +14,13 @@ class EditPromptIn(BaseModel):
 class FixPromptIn(BaseModel):
     prompt_content: str 
     status: str = "active"
+
+class EvalQueryIn(BaseModel):
+    query: str
+
+class EvalOut(BaseModel):
+    prompt_id: UUID
+    quality: Literal["pass", "fail"]
 
 class PromptOut(BaseModel):
     prompt_id: UUID
