@@ -15,8 +15,9 @@ class FixPromptIn(BaseModel):
     prompt_content: str 
     status: str = "active"
 
-class EvalQueryIn(BaseModel):
+class EvalCaseIn(BaseModel):
     query: str
+    correct_answer: str
 
 class EvalOut(BaseModel):
     prompt_id: UUID
@@ -49,4 +50,11 @@ class TestCaseOut(BaseModel):
 
     model_config = ConfigDict(from_attributes=True)
  
- 
+class EvaluationScore(BaseModel):
+    faithfulness: float
+    context_relevancy: float
+    answer_relevancy: float
+
+class AgentResponse(BaseModel):
+    quality: Literal["pass", "fail"]
+

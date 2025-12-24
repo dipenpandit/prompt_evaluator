@@ -5,7 +5,10 @@ class Settings(BaseSettings):
     db_host: str 
     db_user: str 
     db_password: str 
-    api_url: str = "http://localhost:8000"   
+    api_url: str = "http://localhost:8000"  
+    openrouter_api_key: str
+    openrouter_url: str
+    llm: str = "gpt-4o-mini" 
 
     model_config = SettingsConfigDict(
         env_file=".env",
