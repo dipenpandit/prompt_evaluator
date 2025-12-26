@@ -9,6 +9,7 @@ class Settings(BaseSettings):
     openrouter_api_key: str
     openrouter_url: str
     llm: str = "gpt-4o-mini" 
+    rag_api: str = "http://localhost:8001/rag"
 
     model_config = SettingsConfigDict(
         env_file=".env",
