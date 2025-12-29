@@ -62,30 +62,30 @@ async def make_evaluation(prompt_id: str,
         json_str = match.group(0)  # still a string
         agent_json = json.loads(json_str) # convert to dictionary
 
-    if agent_json.get("quality") == "fail":
-         print(agent_json.keys())
-        # Add the updated prompt to the databse with status active and set the current version in prompts table to the new version
-         update_response = requests.put(
-             f"{settings.api_url}/prompts/{prompt_id}",
-             json={
-                    "prompt_content": agent_json.get("prompt_content", ""),
-                })
-         print(update_response.json())
-         if update_response.status_code != 201:
-             raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Failed to update prompt after evaluation.")
-         
-        #  Set the status of the new version to active for the updated prompt
-         activate_status = requests.patch(f"{settings.api_url}/prompts/{prompt_id}/activate")
-         if activate_status.status_code != 200:
-             raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Failed to activate updated prompt after evaluation.")
-         print(activate_status.json())
-    elif agent_json.get("quality", "") == "pass":
-        print(f"Elif keys, {agent_json.keys()}")
-        # Set the status of the passed prompt to active
-        activate_status = requests.patch(f"{settings.api_url}/prompts/{prompt_id}/activate")
-        if activate_status.status_code != 200:
-            raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Failed to activate prompt after evaluation.")
 
+    # Add the updated prompt to the databse with status active and set the current version in prompts table to the new version
+    if agent_json.get("quality") == "fail":
+       new_prompt_content = agent_json.get("prompt_content")
+       new_version_number = current_version.version_number + 1
+       new_version = PromptVersion(
+           prompt_id=prompt_id,
+           prompt_content=new_prompt_content,
+           version_number=new_version_number,
+           status="active"
+        )
+       db.add(new_version)
+       db.flush()  # Generate the new_version.version_id UUID
+
+       # Update the current version in prompts table
+       prompt.current_version_id = new_version.version_id
+       db.commit()
+       db.refresh(prompt)
+
+    # Set the status flag to active in prompt_versions table for the passed prompt
+    elif agent_json.get("quality") == "pass":
+        current_version.status = "active"
+        db.commit()
+        db.refresh(current_version)
 
     return EvalOut(
         prompt_content = agent_json.get("prompt_content", ""),
