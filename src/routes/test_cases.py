@@ -21,12 +21,12 @@ async def get_test_cases_by_id(prompt_id: UUID, db: Session = Depends(get_db)) -
 
 
 # GET - /{test_id} 
-@router.get("/{test_id}", response_model=TestCaseOut, status_code=status.HTTP_200_OK)
+@router.get("/test_case/{test_id}", response_model=TestCaseOut, status_code=status.HTTP_200_OK)
 async def get_test_case_by_id(test_id: UUID, db: Session = Depends(get_db)) -> TestCaseOut:
     test_case = db.get(TestCase, test_id)
     if not test_case:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Test case not found")
-    return TestCaseOut.model_validate(test_case) 
+    return TestCaseOut.model_validate(test_case)
 
 
 # POST - /{prompt_id}

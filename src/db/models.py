@@ -1,5 +1,5 @@
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column 
-from sqlalchemy import ForeignKey, String, UUID, DateTime
+from sqlalchemy import ForeignKey, String, UUID, DateTime, Index
 from typing import Optional 
 import datetime
 from uuid import uuid4
@@ -23,6 +23,15 @@ class PromptVersion(Base):
     prompt_content: Mapped[str] = mapped_column(String, nullable=False)
     status: Mapped[str] = mapped_column(String, default="inactive")
     created: Mapped[datetime.datetime] = mapped_column(DateTime, default=lambda: datetime.datetime.now(datetime.timezone.utc))
+
+    __table_args__ = (
+        Index(
+            "uq_prompt_active_status",
+            "prompt_id",
+            unique=True,
+            postgresql_where=(status == "active")
+        ),
+    )
 
 class TestCase(Base):
     __tablename__ = "test_cases"

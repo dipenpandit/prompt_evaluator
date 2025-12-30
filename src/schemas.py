@@ -45,7 +45,6 @@ class TestCaseIn(BaseModel):
     question: str = Field(description="The question for the test case.")
     answer: str = Field(description="The expected answer for the test case.")
 
-    model_config = ConfigDict(from_attributes=True)
 
 class TestCaseOut(BaseModel):
     """Test Case output schema."""

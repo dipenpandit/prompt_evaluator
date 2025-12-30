@@ -26,36 +26,24 @@ async def get_prompt_versions(prompt_id: str, db: Session = Depends(get_db)) -> 
     if not versions:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="No versions found for this prompt")
     return [
-        DisplayVersion(
-            version_id=version.version_id,
-            prompt_id=version.prompt_id,
-            prompt_content=version.prompt_content,
-            version_number=version.version_number,
-            status=version.status,
-            created_at=version.created_at
-        ) for version in versions
+        DisplayVersion.model_validate(version) for version in versions
     ]
 
-# GET - /versions/{version_id}
-@router.get("/{version_id}", response_model=DisplayVersion, status_code=status.HTTP_200_OK)
+
+# GET - /versions/version/{version_id}
+@router.get("/version/{version_id}", response_model=DisplayVersion, status_code=status.HTTP_200_OK)
 async def get_prompt_version_by_id(version_id: str, db: Session = Depends(get_db)) -> DisplayVersion:
     """Retrieve a specific prompt version by its version id."""
     version = db.get(PromptVersion, version_id)
     if not version:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Prompt version not found")
-    return DisplayVersion(
-        version_id=version.version_id,
-        prompt_id=version.prompt_id,
-        prompt_content=version.prompt_content,
-        version_number=version.version_number,
-        status=version.status,
-        created_at=version.created_at
-    )
+    return DisplayVersion.model_validate(version)
+
 
 # PATCH - /versions/{version_id}/activate
 @router.patch("/{version_id}/activate", response_model=DisplayVersion, status_code=status.HTTP_200_OK)
 async def activate_prompt_version(version_id: str,
                                   db: Session = Depends(get_db)) -> DisplayVersion:
     """Set a specific prompt version as the active version for its parent prompt."""
-    return set_prompt_active(version_id, db)
-
+    updated_version = set_prompt_active(version_id, db)
+    return DisplayVersion.model_validate(updated_version)

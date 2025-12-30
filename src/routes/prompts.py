@@ -69,14 +69,3 @@ async def update_prompt(prompt_id: str,
     
     return update_prompt_version(current_prompt, prompt_data, db)
 
-
-# PATCH - /prompts/{prompt_id}/activate
-@router.patch("/{prompt_id}/activate", response_model=DisplayPrompt, status_code=status.HTTP_200_OK)
-async def activate_prompt(prompt_id: str,
-                          db: Session = Depends(get_db)) -> DisplayPrompt:
-    """Set the current version of the prompt to active status."""
-    prompt = db.get(Prompt, prompt_id)
-    if not prompt:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Prompt not found")
-    
-    return set_prompt_active(prompt, db)

@@ -1,7 +1,9 @@
-from fastapi import Depends, HTTPException
+from fastapi import Depends, HTTPException, status
 from src.schemas import DisplayPrompt, EditPromptIn, DisplayVersion
 from src.db.database import get_db
 from sqlalchemy.orm import Session
+from sqlalchemy import update
+from sqlalchemy.exc import IntegrityError
 from src.db.models import Prompt, PromptVersion
 from uuid import UUID
 
@@ -50,17 +52,30 @@ def set_prompt_active(version_id: UUID,
                       db: Session = Depends(get_db)):
     """Set the current version of the prompt to active status."""
     version = db.get(PromptVersion, version_id)
-    if version.status != "active":
+
+    if not version:
+        raise HTTPException(status_code=404, detail="Prompt version not found")
+    
+    try:
+        # Set all the versions for this specific prompt_id to 'inactive'
+        stmt = (
+            update(PromptVersion).
+            where(PromptVersion.prompt_id == version.prompt_id).
+            values(status="inactive")
+        )
+        db.execute(stmt)
+
+        # Set the specific version to 'active'
         version.status = "active"
+
+        # Commit the transaction
         db.commit()
-    return DisplayVersion(
-        version_id=version.version_id,
-        prompt_id=version.prompt_id,
-        prompt_content=version.prompt_content,
-        version_number=version.version_number,
-        status=version.status,
-        created_at=version.created_at
-    )
+        db.refresh(version)
+        
+        return version
+    except Exception:
+        db.rollback()
+        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Another prompt version is already active.")
 
 
 
