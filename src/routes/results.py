@@ -5,13 +5,13 @@ from sqlalchemy.orm import Session
 from sqlalchemy import select
 from src.db.models import TestResults, TestCase
 from typing import List
-from src.schemas import TestResultOut
+from src.schemas import DisplayTestResult
 
 router = APIRouter(prefix="/results", tags=["Results"])
 
 # GET - /results/{version_id}
-@router.get("/{version_id}", response_model=List[TestResultOut], status_code=status.HTTP_200_OK)
-async def get_results_by_version_id(version_id: str, db: Session = Depends(get_db)) -> List[TestResultOut]:
+@router.get("/{version_id}", response_model=List[DisplayTestResult], status_code=status.HTTP_200_OK)
+async def get_results_by_version_id(version_id: str, db: Session = Depends(get_db)) -> List[DisplayTestResult]:
     """Retrieve all test results for a specific prompt version"""
     stmt = (
         select(

@@ -70,16 +70,17 @@ class TestResultOut(BaseModel):
     test_id: UUID = Field(description="The test case being evaluated.")
     prompt_version_id: UUID = Field(description="The version of the prompt being tested.")
     result: str = Field(description="Result of the test case evaluation.")
-    reason: str = Field(description="Explanation for the test result.")
+    reason: Optional[str] = Field(description="Explanation for the test result.")
 
     model_config = ConfigDict(from_attributes=True)
 
 class EvaluationAPIOut(BaseModel):
     """Final test result from evaluation endpoint."""
     test_id: UUID = Field(description="The test case being evaluated.")
+    prompt_id: UUID = Field(description="The prompt associated with the test case.")
     prompt_version_id: UUID = Field(description="The version of the prompt being tested.")
     result: str = Field(description="Result of the test case evaluation.")
-    reason: str = Field(description="Explanation for the test result.")
+    reason: Optional[str] = Field(description="Explanation for the test result.")
     new_prompt_content: Optional[str]   # only for failed test cases where prompt was updated
 
     model_config = ConfigDict(from_attributes=True)
@@ -94,7 +95,7 @@ class DisplayTestResult(BaseModel):
     reason: str = Field(description="Explanation for the test result.")
 
  
-### Schemas for Evaluator Agent Interaction
+# Schemas for Evaluator Agent Interaction
 class EvaluationLLMOut(BaseModel):
     """Structured response from the evaluator llm inside the evaluate_prompt tool."""
     faithfulness: float = Field(description="Score how strictly the RAG Answer is grounded in the Provided Context.")
