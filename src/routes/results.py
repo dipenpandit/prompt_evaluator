@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, status, HTTPException
-from src.schemas import Disp, DisplayTestResult
+from src.schemas import DisplayTestResult
 from src.db.database import get_db
 from sqlalchemy.orm import Session
 from sqlalchemy import select

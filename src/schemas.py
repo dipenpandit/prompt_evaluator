@@ -76,7 +76,6 @@ class TestResultOut(BaseModel):
 
 class EvaluationAPIOut(BaseModel):
     """Final test result from evaluation endpoint."""
-    result_id: UUID = Field(description="The test case being evaluated.")
     test_id: UUID = Field(description="The test case being evaluated.")
     prompt_version_id: UUID = Field(description="The version of the prompt being tested.")
     result: str = Field(description="Result of the test case evaluation.")

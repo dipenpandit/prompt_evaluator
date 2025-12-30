@@ -90,7 +90,6 @@ async def make_evaluation(prompt_id: str,
         ), db)
 
     return EvaluationAPIOut(
-        result_id=test_result.result_id,
         test_id=test_result.test_id,
         prompt_version_id=test_result.prompt_version_id,
         result=test_result.result,
